@@ -1,0 +1,14 @@
+aiostream==0.5.2
+discord.py==2.3.2
+ffmpeg_python==0.2.0
+google_api_python_client==2.123.0
+librespot==0.0.9
+openai==1.14.3
+Pillow==10.2.0
+python-dotenv==1.0.1
+Requests==2.31.0
+spotipy==2.23.0
+SQLAlchemy==2.0.28
+validators==0.22.0
+youtube_search_python==1.6.6
+yt_dlp==2023.12.24.232657.dev0
