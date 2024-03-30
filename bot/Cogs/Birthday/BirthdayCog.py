@@ -121,8 +121,8 @@ class BirthdayCog(commands.Cog):
             return
 
         try:
-            birthday_day=int(arg[0:2])
-            birthday_month=int(arg[3:5])
+            birthday_day = int(arg[0:2])
+            birthday_month = int(arg[3:5])
         except:
             await ctx.reply("Eso no es un cumpleaños ah\n(Formato: 'DD/MM')")
             return
@@ -162,6 +162,20 @@ class BirthdayCog(commands.Cog):
         except TypeError:
             await ctx.reply("El argumento del comando no es un rol")
 
+    # allows you to add a user without them having to run the command
+    @cum_admin.command()
+    @commands.has_permissions(administrator = True)
+    async def add(self, ctx, userId : str, dateString : str) -> None:
+        serverId = ctx.guild.id
+        try:
+            userId = int(userId)
+            birthday_day = int(dateString[0:2])
+            birthday_month = int(dateString[3:5])
+            self.dbConnector.addServer(serverId)
+            self.dbConnector.addMember(userId, serverId, birthday_day, birthday_month)
+        except:
+            print(f"exception in cum admin add: {userId}, {serverId}")
+
     async def listBirthdays(self, ctx, server_id : int):
         reply = await self.listBirthdaysFromServer(server_id)
         await ctx.reply(reply)
@@ -172,7 +186,10 @@ class BirthdayCog(commands.Cog):
         reply = "**LISTA DE FECHAS DE CUMPLEAÑOS:**\n"
 
         for member in memberArray:
-            user = await self.bot.fetch_user(member.userId)
+            try:
+                user = await self.bot.fetch_user(member.userId)
+            except:
+                continue
             username = user.name
             spacing = " " * (32 - len(username)) # generate empty spaces from the usernames length
 
@@ -182,8 +199,11 @@ class BirthdayCog(commands.Cog):
         return reply
     
     def pingToId(self, ping : str) -> int:
-        ping = ping[3:-1]
         try:
+            if ping[2] == "&":
+                ping = ping[3:-1]
+            else:
+                ping = ping[2:-1]
             return int(ping)
         except:
             raise TypeError("Not a ping")
