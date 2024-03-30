@@ -174,8 +174,14 @@ class YoutubeConnector(iStreamConnector, iSearchableConnector, iPlaylistConnecto
         youtubeSongUrl = f"{YT_URL}{id}"
         streamUrl = ""
         
-        with yt_dlp.YoutubeDL(YT_DLP_OPTS) as ydl:
-            info = ydl.extract_info(youtubeSongUrl, download = False)
-            streamUrl = info["url"]
-    
-        return streamUrl
+        try:
+
+            with yt_dlp.YoutubeDL(YT_DLP_OPTS) as ydl:
+                info = ydl.extract_info(youtubeSongUrl, download = False)
+                streamUrl = info["url"]
+        
+            return streamUrl
+        
+        except yt_dlp.DownloadError:
+
+            raise ValueError("Song is unavailable")

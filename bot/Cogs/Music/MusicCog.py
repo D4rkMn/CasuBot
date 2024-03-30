@@ -220,7 +220,15 @@ class MusicCog(commands.Cog):
 
         print('\n----------------------------------------------------------')
 
-        audioStream = playlist.playCurrentSong()
+        try:
+            audioStream = playlist.playCurrentSong()
+        except ValueError:
+            playlist.resetTimestamp()
+            playlist.handleNextSong()
+            await ctx.send("La canción no se encuentra disponible")
+            await self.playSong(ctx, channelId)
+            return
+
         voiceClient.play(audioStream)
 
         while voiceClient.is_playing() or voiceClient.is_paused() or playlist.isPlayingStopped:
