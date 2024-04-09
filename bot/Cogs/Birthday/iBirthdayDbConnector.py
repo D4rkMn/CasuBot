@@ -49,10 +49,10 @@ class iMember(ABC):
         pass
 
 #
-#   iDbConnector
-#   Interface to hold different implementations of Database Connectors 
+#   iBirthdayDbConnector
+#   Interface to hold different implementations of Database Connectors for the birthday cog
 #
-class iDbConnector(ABC):
+class iBirthdayDbConnector(ABC):
     @abstractmethod
     def addServer(self, server_id : int) -> None:
         pass

@@ -7,6 +7,7 @@ from bot.Cogs.Birthday.BirthdayHelp import BirthdayHelp
 from bot.Cogs.Shitpost.ShitpostHelp import ShitpostHelp
 from bot.Cogs.Cubixo.CubixoHelp import CubixoHelp
 from bot.Cogs.Talk.TalkHelp import TalkHelp
+from bot.Cogs.Reminders.ReminderHelp import ReminderHelp
 
 #
 #   HelpCog
@@ -28,6 +29,7 @@ class HelpCog(commands.Cog):
 - c!help shitpost: Muestra los comandos de shitpost
 - c!help cubixo: Muestra los comandos de cubixo
 - c!help talk: Muestra los comandos de hablar
+- c!help reminder: Muestra los comandos de recordatorios
 """
         await ctx.reply(reply)
 
@@ -69,6 +71,11 @@ class HelpCog(commands.Cog):
     @help.command()
     async def talk(self, ctx):
         reply = TalkHelp.message()
+        await ctx.reply(reply)
+
+    @help.command()
+    async def reminder(self, ctx):
+        reply = ReminderHelp.message()
         await ctx.reply(reply)
 
 helpCogInstance = HelpCog()

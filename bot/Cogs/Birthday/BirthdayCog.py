@@ -1,7 +1,7 @@
-from bot.Cogs.Birthday.DateFormatter import DateFormatter, Date
+from bot.Utility.DateFormatter import DateFormatter, Date
 
-from bot.Cogs.Birthday.iDbConnector import iDbConnector
-from bot.Cogs.Birthday.SQLiteConnector import SQLiteConnector, iServer, iMember
+from bot.Cogs.Birthday.iBirthdayDbConnector import iBirthdayDbConnector
+from bot.Cogs.Birthday.BirthdaySQLiteConnector import BirthdaySQLiteConnector, iServer, iMember
 
 from discord.ext import commands,tasks
 from discord import utils, AllowedMentions
@@ -12,7 +12,7 @@ from discord import utils, AllowedMentions
 #   Uses dependency injection to accept different database connectors if needed
 #
 class BirthdayCog(commands.Cog):
-    def __init__(self, _dbConnector : iDbConnector):
+    def __init__(self, _dbConnector : iBirthdayDbConnector):
         self.dbConnector = _dbConnector
         self.months = "enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre".split()
         
@@ -33,10 +33,10 @@ class BirthdayCog(commands.Cog):
         for server in serverArray:
             await self.wishHappyBirthday(server.serverId)
 
-        self.newDayCheck.start()
+        self.birthdayNewDayCheck.start()
 
     @tasks.loop(seconds = 60)
-    async def newDayCheck(self):
+    async def birthdayNewDayCheck(self):
         self.prevDate = self.todayString
         self.todayString = DateFormatter.todayAsString()
 
@@ -208,5 +208,5 @@ class BirthdayCog(commands.Cog):
         except:
             raise TypeError("Not a ping")
 
-dbConnector = SQLiteConnector()
+dbConnector = BirthdaySQLiteConnector()
 birthdayCogInstance = BirthdayCog(dbConnector)

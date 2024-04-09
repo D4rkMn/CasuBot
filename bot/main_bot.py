@@ -11,6 +11,7 @@ from bot.Cogs.Presence.PresenceCog import presenceCogInstance
 from bot.Cogs.Music.MusicCog import musicCogInstance
 from bot.Cogs.Talk.TalkCog import talkCogInstance
 from bot.Cogs.Help.HelpCog import helpCogInstance
+from bot.Cogs.Reminders.ReminderCog import reminderCogInstance
 
 cogsArray = [
     birthdayCogInstance,
@@ -22,7 +23,8 @@ cogsArray = [
     presenceCogInstance,
     musicCogInstance,
     talkCogInstance,
-    helpCogInstance
+    helpCogInstance,
+    reminderCogInstance
 ]
 
 class CasuBot(commands.Bot):

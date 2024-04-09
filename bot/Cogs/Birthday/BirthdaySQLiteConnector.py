@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from typing import List
 
-from bot.Cogs.Birthday.iDbConnector import iDbConnector, iServer, iMember
+from bot.Cogs.Birthday.iBirthdayDbConnector import iBirthdayDbConnector, iServer, iMember
 
 Base = declarative_base()
 
@@ -66,11 +66,11 @@ class Member(Base):
         return self.birthday_month
 
 #
-#   SQLiteConnector
-#   Implementation of iDbConnector
+#   BirthdaySQLiteConnector
+#   Implementation of iBirthdayDbConnector
 #   Connects to the birthdays SQLite database using SQLAlchemy ORM as a base
 #
-class SQLiteConnector(iDbConnector):
+class BirthdaySQLiteConnector(iBirthdayDbConnector):
     def __init__(self):
         self.engine = create_engine("sqlite:///cums.db", echo = False)
         Base.metadata.create_all(self.engine)
@@ -148,3 +148,4 @@ class SQLiteConnector(iDbConnector):
             return
         
         self.session.delete(member)
+        self.session.commit()

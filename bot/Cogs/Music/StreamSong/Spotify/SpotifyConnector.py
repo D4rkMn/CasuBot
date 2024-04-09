@@ -26,9 +26,15 @@ SPOTIFY_PASS = os.environ.get("SPOTIFY_PASS")
 clientCredentialsManager = SpotifyClientCredentials(client_id = CLIENT_ID, client_secret = CLIENT_SECRET)
 spotify : spotipy.Spotify = spotipy.Spotify(client_credentials_manager = clientCredentialsManager)
 
-librespotSession = Session.Builder() \
-    .user_pass(SPOTIFY_USER, SPOTIFY_PASS) \
-    .create()
+while True:
+    try:
+        librespotSession = Session.Builder() \
+            .user_pass(SPOTIFY_USER, SPOTIFY_PASS) \
+            .create()
+        break
+    except:
+        print("error logging in to librespot")
+        pass
 
 def extractPlaylistId(url : str) -> str:
     pattern = r'/playlist/([a-zA-Z0-9]+)'
