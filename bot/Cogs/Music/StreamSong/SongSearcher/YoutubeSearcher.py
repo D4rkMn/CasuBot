@@ -2,8 +2,6 @@ from bot.Cogs.Music.StreamSong.SongSearcher.iStreamSearcher import iStreamSearch
 from bot.Cogs.Music.StreamSong.iStreamSong import iStreamSong
 from bot.Cogs.Music.StreamSong.Youtube.YoutubeSong import YoutubeSong
 from bot.Cogs.Music.StreamSong.Youtube.YoutubeConnector import YoutubeConnector
-
-from youtubesearchpython import VideosSearch
 from typing import List
 
 #

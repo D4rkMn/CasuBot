@@ -1,5 +1,6 @@
 import yt_dlp
-from youtubesearchpython import VideosSearch
+from youtube_search import YoutubeSearch
+
 from googleapiclient.discovery import build
 
 from bot.Cogs.Music.StreamSong.ConnectorInterfaces.iStreamConnector import iStreamConnector, SongInfo
@@ -59,12 +60,12 @@ class YoutubeConnector(iStreamConnector, iSearchableConnector, iPlaylistConnecto
 
     @staticmethod
     def searchQuery(searchQuery : str, resultLimit : int) -> List[SongInfo]:
-        queriedVideos = VideosSearch(searchQuery, limit = resultLimit)
+        queriedVideos = YoutubeSearch(searchQuery, max_results = resultLimit).to_dict()
         searchResults = []
 
-        for video in queriedVideos.result()["result"]:
+        for video in queriedVideos:
             name = video['title']
-            artist = video['channel']['name']
+            artist = video['channel']
             duration = video['duration'] if video['duration'] is not None else 'LIVE'
             id = video['id']
 
