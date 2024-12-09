@@ -4,7 +4,6 @@ from bot.Cogs.Music.StreamSong.ConnectorInterfaces.iStreamConnector import iStre
 
 from bot.Cogs.Music.StreamSong.iStreamSong import iStreamSong
 from bot.Cogs.Music.StreamSong.Youtube.YoutubeSong import YoutubeSong
-from bot.Cogs.Music.StreamSong.Spotify.SpotifySong import SpotifySong
 from bot.Cogs.Music.StreamSong.File.FileSong import FileSong
 
 #
@@ -20,7 +19,7 @@ class StreamSongFactory:
         if streamProvider == "Youtube":
             song = YoutubeSong()
         elif streamProvider == "Spotify":
-            song = SpotifySong()
+            raise ValueError("Spotify has been deprecated")
         elif streamProvider == "File":
             song = FileSong()
 
@@ -32,7 +31,7 @@ class StreamSongFactory:
         if connector.getType() == "Youtube":
             return YoutubeSong()
         if connector.getType() == "Spotify":
-            return SpotifySong()
+            raise ValueError("Spotify has been deprecated")
         if connector.getType() == "File":
             return FileSong()
 
@@ -43,7 +42,7 @@ class StreamSongFactory:
         if streamProvider == "Youtube":
             song = YoutubeSong()
         elif streamProvider == "Spotify":
-            song = SpotifySong()
+            raise ValueError("Spotify has been deprecated")
 
         song.createFromDetails(songName, songArtist, songDuration, songId)
         return song

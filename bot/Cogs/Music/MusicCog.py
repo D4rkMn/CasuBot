@@ -89,8 +89,8 @@ class MusicCog(commands.Cog):
 
     @search.command()
     async def sp(self, ctx, *, searchQuery):
-        await self.searchAndPlay(ctx, searchQuery, "Spotify")
-
+        await ctx.reply("Spotify ha sido removido por motivos")
+        
     async def searchAndPlay(self, ctx, searchQuery : str, searchProvider : str) -> None:
         isJoined = await self.join(ctx)
         
@@ -152,8 +152,12 @@ class MusicCog(commands.Cog):
                     await self.addPlaylist(ctx, arg)
                     return
 
-                song = self.playlistDict[channelId].getSongByUrl(arg)
-            
+                try:
+                    song = self.playlistDict[channelId].getSongByUrl(arg)
+                except ValueError:
+                    await ctx.reply("Spotify ha sido removido por motivos")
+                    return
+
             else:
                 song = await self.searchByQuery(ctx, arg)
                 if song is None:
