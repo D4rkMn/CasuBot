@@ -66,7 +66,7 @@ class YoutubeConnector(iStreamConnector, iSearchableConnector, iPlaylistConnecto
         for video in queriedVideos:
             name = video['title']
             artist = video['channel']
-            duration = video['duration'] if video['duration'] is not None else 'LIVE'
+            duration = video['duration'] if video['duration'] != "0" else 'LIVE'
             id = video['id']
 
             song = SongInfo(name, artist, duration, id)
