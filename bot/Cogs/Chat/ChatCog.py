@@ -1,6 +1,7 @@
 from bot.Cogs.Chat.iLlmConnector import iLlmConnector
 from bot.Cogs.Chat.GptConnector import GptConnector
 from bot.Cogs.Chat.ChatsManager import ChatsManager
+from bot.Utility.ImageUrlExtractor import ImageUrlExtractor
 
 from discord.ext import commands
 
@@ -42,8 +43,9 @@ class ChatCog(commands.Cog):
             channel_id = message.channel.id
 
             msg = self.__messagePingsToUsernames(message, message.content)
+            imageUrl = ImageUrlExtractor.extract(message)
 
-            self.chatsManager.addMessageToChannel(channel_id, username, msg)
+            self.chatsManager.addMessageToChannel(channel_id, username, msg, imageUrl)
             response = self.chatsManager.addLlmResponseToChannel(channel_id)
 
         await message.reply(response)

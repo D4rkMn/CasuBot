@@ -7,6 +7,8 @@ class LlmResponseProcessor:
             array = text.split('\n')
             text = LlmResponseProcessor.__getFirstNonEmpty(array)
         text = LlmResponseProcessor.__removeEmojis(text)
+        text = LlmResponseProcessor.__removeSelfMentions(text)
+        text = text.strip()
         return text
     
     @staticmethod
@@ -40,3 +42,8 @@ class LlmResponseProcessor:
         # Replace emojis with an empty string
         cleaned_text = emoji_pattern.sub(r'', text)
         return cleaned_text
+    
+    @staticmethod
+    def __removeSelfMentions(text: str) -> str:
+        result = re.sub(r"Casu:", "", text)
+        return result

@@ -1,11 +1,6 @@
-from bot.Cogs.Chat.iLlmConnector import iLlmConnector
+from bot.Cogs.Chat.iLlmConnector import iLlmConnector, Message
 from bot.Cogs.Chat.LlmResponseProcessor import LlmResponseProcessor
 from typing import Dict, List
-
-class Message:
-    def __init__(self, _username :str , _messageContent : str):
-        self.username = _username
-        self.messageContent = _messageContent
 
 #
 #   ChatsManager
@@ -15,28 +10,20 @@ class Message:
 class ChatsManager:
     def __init__(self, _llmConnector : iLlmConnector, _systemMessage : str):
         self.llmConnector = _llmConnector
-        self.systemMessage = _systemMessage
+        self.systemMessage : Message = Message(_username = "Sistema", _textContent = _systemMessage)
         self.chatDictionary : Dict[int, List[Message]] = {}
 
-    def addLlmResponseToChannel(self, channel_id : int) -> str:
+    def addLlmResponseToChannel(self, channel_id : int) -> List[Message]:
         chatlog = self.getChatlogFromChannel(channel_id)
-        response = self.llmConnector.generateResponse(chatlog)
+        response = self.llmConnector.generateResponse(self.systemMessage, chatlog)
         response = LlmResponseProcessor.process(response)
-        self.addMessageToChannel(channel_id, "Casu", response)
+        self.addMessageToChannel(channel_id, "Casu", response, None)
         return response
 
-    def getChatlogFromChannel(self, channel_id : int) -> str:
-        chatlog = f"Sistema: {self.systemMessage} \n"
-        messageHistory = self.chatDictionary[channel_id]
-        
-        for message in messageHistory:
-            chatlog += f"{message.username}: {message.messageContent}\n"
-        
-        chatlog += "Casu: "
+    def getChatlogFromChannel(self, channel_id : int) -> List[Message]:
+        return self.chatDictionary[channel_id]
 
-        return chatlog
-
-    def addMessageToChannel(self, channel_id : int, username : str, messageContent : str):
+    def addMessageToChannel(self, channel_id : int, username : str, textContent : str, imageUrl : str):
         if channel_id not in self.chatDictionary:
             self.chatDictionary[channel_id] = []
 
@@ -52,4 +39,4 @@ class ChatsManager:
             if chatlog[0].username == "Casu":
                 chatlog.pop(0)
         
-        chatlog.append(Message(username,messageContent))
+        chatlog.append(Message(_username = username, _textContent = textContent, _imageUrl = imageUrl))
