@@ -45,11 +45,11 @@ Escribe "c!talk hola" y CasuBot dirá "hola". Es de sobra la función mas inutil
 
 ## Requisitos
 
-Debes correr el archivo main.py. Para ello también necesitarás de lo siguiente:
-
-### Instalar requirements.txt
+Necesitarás tener ffmpeg instalado. Además, se necesitan las siguientes librerías de Python:
 
 ```pip install -r requirements.txt```
+
+Adicionalmente, el Dockerfile puede servir como guía - Python 3.13 parece no funcionar. Python 3.10 ha sido probado que funciona.
 
 ### Token de bot de Discord
 
@@ -64,6 +64,8 @@ Este lo consigues en Google Cloud Console.
 https://console.cloud.google.com
 
 ### Spotify Client ID / Secret
+
+(Actualmente Spotify ha sido deprecated)
 
 Este lo consigues en Spotify for Developers
 
@@ -84,8 +86,13 @@ https://platform.openai.com
 Creas un archivo llamado ".env" que tome la siguiente forma:
 
 ```
-# Discord
-DISCORD_TOKEN = "DISCORD TOKEN"
+# "true" si estamos en modo dev. Caso contrario estamos en modo prod.
+DEBUG = "true"
+
+# Casu Token (Prod bot)
+CASU_TOKEN = "DISCORD TOKEN"
+# Dorito Token (Dev bot)
+DORITO_TOKEN = "DISCORD TOKEN"
 
 # Youtube
 YOUTUBE_API_KEY = "YOUTUBE API KEY"
