@@ -1,5 +1,6 @@
 from discord.ext import commands
 from discord import ClientException
+from discord import VoiceChannel
 from bot.Cogs.Music.PlaylistManager import PlaylistManager
 from bot.Utility.UrlValidator import UrlValidator
 from bot.Cogs.Music.SecondsToDurationFormatter import SecondsToDurationFormatter
@@ -7,7 +8,7 @@ from bot.Cogs.Music.StreamSong.iStreamSong import iStreamSong
 from typing import Dict
 import asyncio
 
-WAITING_TIMEOUT = 60
+WAITING_TIMEOUT = 30
 
 #
 #   MusicCog
@@ -19,6 +20,37 @@ class MusicCog(commands.Cog):
 
     def assignBot(self, bot):
         self.bot : commands.Bot = bot
+
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        if not before or not before.channel or not before.channel.id:
+            return
+
+        if after and after.channel and after.channel.id and after.channel.id in self.playlistDict:
+            return
+        
+        channelId = before.channel.id
+        channel = self.bot.get_channel(channelId)
+
+        if not channel or not isinstance(channel, VoiceChannel):
+            return
+
+        userCount = len(channel.members)
+
+        if member != self.bot.user and userCount > 1:
+            return
+        
+        voiceClient = None
+        for client in self.bot.voice_clients:
+            if client.channel.id == channelId:
+                voiceClient = client
+                break
+        
+        if voiceClient is None:
+            return
+
+        await voiceClient.disconnect(force = True)
+        self.playlistDict.pop(channelId)
 
     @commands.Cog.listener()
     async def on_message(self, message) -> None:
@@ -47,7 +79,7 @@ class MusicCog(commands.Cog):
 
         try:
             await voiceChannel.connect()
-        except ClientException: # if already connected
+        except ClientException as e: # if already connected
             pass
         finally:
             channelId = ctx.author.voice.channel.id
@@ -57,7 +89,7 @@ class MusicCog(commands.Cog):
         
     @music.command()
     async def leave(self, ctx):
-        voiceClient=ctx.message.guild.voice_client
+        voiceClient = ctx.message.guild.voice_client
 
         if voiceClient is None:
             await ctx.send('No estoy conectado a un canal de voz tonto weon')
@@ -111,6 +143,7 @@ class MusicCog(commands.Cog):
         
         song = await self.searchByQuery(ctx, searchQuery, searchProvider)
         if song is None:
+            await ctx.reply("Se cancelo la solicitud!")
             return
         
         self.playlistDict[channelId].addSongToPlaylist(song)
@@ -161,6 +194,7 @@ class MusicCog(commands.Cog):
             else:
                 song = await self.searchByQuery(ctx, arg)
                 if song is None:
+                    await ctx.reply("Se cancelo la solicitud!")
                     return
             
             self.playlistDict[channelId].addSongToPlaylist(song)
@@ -195,7 +229,7 @@ class MusicCog(commands.Cog):
         # then the context of the playing stops existing, thus it cant fetch the channel id.
         # passing the channel id as a parameter instead allows avoiding this thing
         # by not having to rely on a context which might stop existing at the time of query
-        # if no channel is passed then it will be generated, and recursively usde without the
+        # if no channel is passed then it will be generated, and recursively used without the
         # need for a context to even exist in the first place
         if channelId is None:
             channelId = ctx.author.voice.channel.id
@@ -267,21 +301,26 @@ class MusicCog(commands.Cog):
             song = searchResults[i]
             reply += f"{i+1}. {song.name} - {song.artist} - {song.duration}\n"
 
-        reply += f"\nResponde a este mensaje con un numero del 1 al {len(searchResults)} para elegir una canción"
+        reply += f"\nResponde a este mensaje con un numero del 1 al {len(searchResults)} para elegir una canción. 0 para cancelar la solicitud."
 
-        await ctx.reply(reply)
+        queryMessage = await ctx.reply(reply)
+        queryId = queryMessage.id
 
         def check(message):
             return (
                 message.author == ctx.author
                 and message.channel == ctx.channel
+                and message.reference is not None
+                and message.reference.message_id == queryId
                 and message.content.isdigit()
-                and 1 <= int(message.content) <= len(searchResults)
+                and 0 <= int(message.content) <= len(searchResults)
             )
 
         try:
             userResponse = await self.bot.wait_for("message", check = check, timeout = WAITING_TIMEOUT)
             chosenOption = int(userResponse.content) - 1
+            if chosenOption == -1:
+                return None
             return searchResults[chosenOption]
 
         except asyncio.TimeoutError:

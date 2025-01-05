@@ -1,5 +1,4 @@
 from openai import OpenAI
-from typing import List
 
 # import the base interface for the llm connector
 from bot.Cogs.Chat.iLlmConnector import iLlmConnector, Message

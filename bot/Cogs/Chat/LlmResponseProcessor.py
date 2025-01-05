@@ -45,5 +45,6 @@ class LlmResponseProcessor:
     
     @staticmethod
     def __removeSelfMentions(text: str) -> str:
-        result = re.sub(r"Casu:", "", text)
-        return result
+        text = re.sub(r"Casu:", "", text)
+        text = re.sub(r"Dorito:", "", text)
+        return text
