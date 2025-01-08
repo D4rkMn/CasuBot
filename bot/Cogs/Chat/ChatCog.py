@@ -11,7 +11,7 @@ load_dotenv()
 
 def getStringFromFile(filename : str) -> str:
     result = ""
-    with open(filename) as f:
+    with open(filename) as f: 
         for line in f.readlines():
             result += line
     return result

@@ -1,0 +1,4 @@
+(Ordenados por prioridad)
+- Arreglar los bugs de la cola de música
+- Mejorar el sistema de lectura de imagenes
+- Generar ASCII art

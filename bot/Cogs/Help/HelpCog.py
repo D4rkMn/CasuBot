@@ -8,6 +8,8 @@ from bot.Cogs.Shitpost.ShitpostHelp import ShitpostHelp
 from bot.Cogs.Cubixo.CubixoHelp import CubixoHelp
 from bot.Cogs.Talk.TalkHelp import TalkHelp
 from bot.Cogs.Reminders.ReminderHelp import ReminderHelp
+from bot.Cogs.Downloader.DownloaderHelp import DownloadHelp
+from bot.Cogs.Updates.UpdatesHelp import UpdatesHelp
 
 #
 #   HelpCog
@@ -30,6 +32,8 @@ class HelpCog(commands.Cog):
 - c!help cubixo: Muestra los comandos de cubixo
 - c!help talk: Muestra los comandos de hablar
 - c!help reminder: Muestra los comandos de recordatorios
+- c!help download: Muestra los comandos de descargas
+- c!help updates: Muestra los comandos de actualizaciones
 """
         await ctx.reply(reply)
 
@@ -76,6 +80,16 @@ class HelpCog(commands.Cog):
     @help.command()
     async def reminder(self, ctx):
         reply = ReminderHelp.message()
+        await ctx.reply(reply)
+
+    @help.command()
+    async def download(self, ctx):
+        reply = DownloadHelp.message()
+        await ctx.reply(reply)
+
+    @help.command()
+    async def updates(self, ctx):
+        reply = UpdatesHelp.message()
         await ctx.reply(reply)
 
 helpCogInstance = HelpCog()

@@ -1,0 +1,5 @@
+(Ordenados por qué tan recientes son)
+- Se reimplementó el sistema de descargas de videos y canciones, al igual que se arreglaron bugs relacionados con el mismo
+- Se implementó el sistema de updates (updates changelog, updates todo)
+- Cuando el bot es el único usuario en una llamada, este se irá de la misma automáticamente
+- Cuando el bot deja una llamada, se limpia la cola de canciones
