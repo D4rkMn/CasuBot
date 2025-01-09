@@ -51,11 +51,17 @@ Necesitarás tener ffmpeg instalado. Además, se necesitan las siguientes librer
 
 Adicionalmente, el Dockerfile puede servir como guía - Python 3.13 parece no funcionar. Python 3.10 ha sido probado que funciona.
 
-### Token de bot de Discord
+### Tokens de bot de Discord
 
 Este lo consigues en el Developer Portal de Discord.
 
 https://discord.com/developers/applications
+
+Este proyecto está diseñado para tener dos bots: Casu y Dorito. Casu es el bot de production, mientras que Dorito es el bot de development. Para activar Dorito, usar DEBUG = "true". En caso no se vaya a utilizar a Dorito, DORITO_TOKEN puede ser dejado vacío.
+
+### Connection URLS para DBs
+
+Para el uso de las bases de datos de cumpleaños y recordatorios se utiliza un enlace de conexión a base de datos. Se ha probado el correcto funcionamiento de SQLite y PostgreSQL. 
 
 ### Youtube API Key
 
@@ -93,6 +99,10 @@ DEBUG = "true"
 CASU_TOKEN = "DISCORD TOKEN"
 # Dorito Token (Dev bot)
 DORITO_TOKEN = "DISCORD TOKEN"
+
+# Databases
+CUMS_DB_URL = "CUMS DB URL"
+REMINDERS_DB_URL = "REMINDERS DB URL"
 
 # Youtube
 YOUTUBE_API_KEY = "YOUTUBE API KEY"

@@ -1,9 +1,13 @@
 from bot.Utility.DateFormatter import DateFormatter, Date
 
 from bot.Cogs.Reminders.iReminderDbConnector import iReminderDbConnector
-from bot.Cogs.Reminders.ReminderSQLiteConnector import ReminderSQLiteConnector, iReminderMessage
+from bot.Cogs.Reminders.ReminderSQLAlchemyConnector import ReminderSQLAlchemyConnector, iReminderMessage
 
 from discord.ext import commands,tasks
+
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 #
 #   ReminderCog
@@ -85,5 +89,6 @@ class ReminderCog(commands.Cog):
 
         await ctx.reply(f"Recordatorio guardado! \n<@{user_id}>")
 
-dbConnector = ReminderSQLiteConnector()
+REMINDERS_DB_URL = os.environ.get("REMINDERS_DB_URL")
+dbConnector = ReminderSQLAlchemyConnector(connectionUrl = REMINDERS_DB_URL)
 reminderCogInstance = ReminderCog(dbConnector)

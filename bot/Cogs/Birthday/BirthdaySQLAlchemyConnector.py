@@ -9,7 +9,7 @@ Base = declarative_base()
 #
 #   Server (for SQLAlchemy)
 #   Implementation of iServer
-#   Represents SQLite database relations for the server table via SQLAlchemy ORM
+#   Represents database relations for the server table via SQLAlchemy ORM
 #
 @iServer.register
 class Server(Base):
@@ -36,7 +36,7 @@ class Server(Base):
 #
 #   Member (for SQLAlchemy)
 #   Implementation of iMember
-#   Represents SQLite database relations for the member table via SQLAlchemy ORM
+#   Represents database relations for the member table via SQLAlchemy ORM
 #
 @iMember.register
 class Member(Base):
@@ -66,13 +66,14 @@ class Member(Base):
         return self.birthday_month
 
 #
-#   BirthdaySQLiteConnector
+#   BirthdaySQLAlchemyConnector
 #   Implementation of iBirthdayDbConnector
-#   Connects to the birthdays SQLite database using SQLAlchemy ORM as a base
+#   Connects to the birthdays database using SQLAlchemy ORM as a base
+#   As long as a valid connection url for SQLALchemy is provided, it should work 
 #
-class BirthdaySQLiteConnector(iBirthdayDbConnector):
-    def __init__(self):
-        self.engine = create_engine("sqlite:///cums.db", echo = False)
+class BirthdaySQLAlchemyConnector(iBirthdayDbConnector):
+    def __init__(self, connectionUrl : str):
+        self.engine = create_engine(connectionUrl, echo = False)
         Base.metadata.create_all(self.engine)
         Session = sessionmaker(bind = self.engine)
         self.session = Session()

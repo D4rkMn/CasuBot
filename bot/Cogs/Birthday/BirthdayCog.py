@@ -1,10 +1,14 @@
 from bot.Utility.DateFormatter import DateFormatter, Date
 
 from bot.Cogs.Birthday.iBirthdayDbConnector import iBirthdayDbConnector
-from bot.Cogs.Birthday.BirthdaySQLiteConnector import BirthdaySQLiteConnector, iServer, iMember
+from bot.Cogs.Birthday.BirthdaySQLAlchemyConnector import BirthdaySQLAlchemyConnector, iServer, iMember
 
 from discord.ext import commands,tasks
 from discord import utils, AllowedMentions
+
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 #
 #   BirthdayCog
@@ -208,5 +212,6 @@ class BirthdayCog(commands.Cog):
         except:
             raise TypeError("Not a ping")
 
-dbConnector = BirthdaySQLiteConnector()
+CUMS_DB_URL = os.environ.get("CUMS_DB_URL") 
+dbConnector = BirthdaySQLAlchemyConnector(connectionUrl = CUMS_DB_URL)
 birthdayCogInstance = BirthdayCog(dbConnector)

@@ -10,7 +10,7 @@ Base = declarative_base()
 #
 #   ReminderMessage (for SQLAlchemy)
 #   Implementation of iReminderMessage
-#   Represents SQLite database relations for the reminder table via SQLAlchemy ORM
+#   Represents database relations for the reminder table via SQLAlchemy ORM
 #
 @iReminderMessage.register
 class ReminderMessage(Base):
@@ -49,13 +49,14 @@ class ReminderMessage(Base):
         return Date(self.reminder_day, self.reminder_month)
     
 #
-#   ReminderSQLiteConnector
+#   ReminderSQLAlchemyConnector
 #   Implementation of iReminderDbConnector
-#   Connects to the reminders SQLite database using SQLAlchemy ORM as a base
+#   Connects to the reminders database using SQLAlchemy ORM as a base
+#   As long as a valid connection url for SQLALchemy is provided, it should work 
 #
-class ReminderSQLiteConnector(iReminderDbConnector):
-    def __init__(self):
-        self.engine = create_engine("sqlite:///reminders.db", echo = False)
+class ReminderSQLAlchemyConnector(iReminderDbConnector):
+    def __init__(self, connectionUrl : str):
+        self.engine = create_engine(connectionUrl, echo = False)
         Base.metadata.create_all(self.engine)
         Session = sessionmaker(bind = self.engine)
         self.session = Session()

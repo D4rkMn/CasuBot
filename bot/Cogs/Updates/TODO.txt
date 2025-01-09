@@ -1,7 +1,6 @@
 (Ordenados por prioridad)
-- Implementar un DB Connector para PostgreSQL (Cums y Reminders)
 - Mejorar el sistema de lectura de imagenes de CasuGPT
-- Probar el funcionamiento del sistema de música
+- Probar el funcionamiento del sistema de música*
 - Generar ASCII art*
 - Reimplementar spotify*
 (*: No es importante ni garantizo que será implementado)
