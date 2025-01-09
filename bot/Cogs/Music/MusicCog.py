@@ -168,6 +168,11 @@ class MusicCog(commands.Cog):
         channelId = channel.id
         voiceClient = ctx.message.guild.voice_client
 
+        if not voiceClient:
+            # hacky way to fix this lmao
+            print("hacky sol")
+            return self.addArg(ctx, arg)
+
         if not voiceClient.is_connected():
             print("bot voice client isnt connected despite having joined (?")
             return
@@ -236,11 +241,14 @@ class MusicCog(commands.Cog):
 
         if channelId not in self.playlistDict:
             return
-        
+
         playlist = self.playlistDict[channelId]
-        if len(playlist.songList) == 0 or playlist.currentSongIndex >= len(playlist.songList):
+        if len(playlist.songList) == 0 or not playlist.isIndexInBounds(playlist.currentSongIndex):
             return
-        
+
+        if playlist.isPlayingStopped:
+            return
+
         voiceClient = None
 
         for voice_client in self.bot.voice_clients:
@@ -373,9 +381,12 @@ class MusicCog(commands.Cog):
             await ctx.send("No estas en un canal de voz tonto weon")
             return
 
-        self.playlistDict[channelId].startGoingNextSong()
-        voiceClient.stop()
+        playlist = self.playlistDict[channelId]
 
+        if not playlist.startGoingNextSong():
+            await ctx.reply("No se pudo avanzar a la siguiente cancion por motivos (?")
+
+        voiceClient.stop()
         await ctx.reply("Saltando a la siguiente canción")
 
     @music.command()
@@ -391,14 +402,16 @@ class MusicCog(commands.Cog):
             await ctx.send("No estas en un canal de voz tonto weon")
             return
 
-        self.playlistDict[channelId].startGoingPrevSong()
+        playlist = self.playlistDict[channelId]
 
-        if not voiceClient.is_playing() and not self.playlistDict[channelId].isPlayingStopped:
-            self.playlistDict[channelId].handleNextSong()
+        if not playlist.startGoingPrevSong():
+            await ctx.reply("No se pudo retroceder a la cancion anterior por motivos (?")
+
+        if not voiceClient.is_playing() and not playlist.isPlayingStopped:
+            playlist.handleNextSong()
             await self.playSong(ctx, channelId)
 
         voiceClient.stop()
-
         await ctx.reply("Retrocediendo a la anterior canción")
 
     @music.command()

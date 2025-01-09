@@ -18,6 +18,7 @@ class PlaylistManager:
         self.currentTimestamp = 0 # time played in seconds
 
         self.isPlayingStopped = False # if playing was stopped
+        self.busyGoing = False # lock for music changing
         self.goingNext = False # if in process of changing to the next song in queue
         self.goingPrev = False # if in process of changing to the previous song in queue
         
@@ -60,10 +61,12 @@ class PlaylistManager:
         self.currentSongIndex = 0
 
     def loopCurrentSong(self) -> bool:
+        self.isPlaylistLooping = False
         self.isSongLooping = not self.isSongLooping
         return self.isSongLooping
 
     def loopPlaylist(self) -> bool:
+        self.isSongLooping = False
         self.isPlaylistLooping = not self.isPlaylistLooping
         return self.isPlaylistLooping
     
@@ -77,10 +80,11 @@ class PlaylistManager:
     def playCurrentSong(self):
         currentSong : iStreamSong = self.songList[self.currentSongIndex]
         audioStream = currentSong.getAudioStream()
+        self.isPlayingStopped = False
         return audioStream
     
     def handleNextSong(self) -> None:
-        if self.isSongLooping and not (self.goingNext or self.goingPrev):
+        if self.isSongLooping and not self.busyGoing:
             return
         
         if self.isPlayingStopped:
@@ -88,30 +92,50 @@ class PlaylistManager:
         
         step = 1
         
-        if self.goingNext:
-            self.stopGoingNextSong()
-        elif self.goingPrev:
-            self.stopGoingPrevSong()
-            step = -1
+        if self.busyGoing:
+            if self.goingNext:
+                self.stopGoingNextSong()
+            else:
+                self.stopGoingPrevSong()
+                step = -1
         
         if self.isPlaylistLooping:
-            self.currentSongIndex += step
-            self.currentSongIndex %= len(self.songList)
+            self.currentSongIndex = self.__loopIndex(self.currentSongIndex + step)
             return
         
         self.currentSongIndex += step
-        self.currentSongIndex %= len(self.songList) + 1
+        if self.currentSongIndex >= len(self.songList):
+            self.isPlayingStopped = True
+        self.currentSongIndex = self.__clampIndex(self.currentSongIndex)
 
-    def startGoingNextSong(self) -> None:
+    def __clampIndex(self, index: int) -> int:
+        return max(0, min(index, len(self.songList) - 1))
+
+    def __loopIndex(self, index: int) -> int:
+        return index % len(self.songList) if self.songList else 0
+
+    def startGoingNextSong(self) -> bool:
+        if self.busyGoing:
+            return False 
+        self.isPlayingStopped = False
+        self.busyGoing = True
         self.goingNext = True
+        return True
 
     def stopGoingNextSong(self) -> None:
+        self.busyGoing = False
         self.goingNext = False
 
-    def startGoingPrevSong(self) -> None:
+    def startGoingPrevSong(self) -> bool:
+        if self.busyGoing:
+            return False
+        self.isPlayingStopped = False
+        self.busyGoing = True
         self.goingPrev = True
+        return True
 
     def stopGoingPrevSong(self) -> None:
+        self.busyGoing = False
         self.goingPrev = False
 
     def addCountToTimestamp(self) -> None:
@@ -190,14 +214,14 @@ class PlaylistManager:
         self.currentSongIndex = 0
 
     def skipToIndex(self, index : str, clientPlaying : bool) -> None:
-        if not self.isIndexInBounds(index):
+        if not self.isStringIndexInBounds(index):
             raise TypeError("Invalid index")
         
         index = int(index)
         self.currentSongIndex = index - 1 - int(clientPlaying)
 
     def removeIndex(self, index : str) -> None:
-        if not self.isIndexInBounds(index):
+        if not self.isStringIndexInBounds(index):
             raise TypeError("Invalid index")
         
         index = int(index) - 1
@@ -206,12 +230,15 @@ class PlaylistManager:
             raise ValueError("Cant remove index of currently playing song")
         
         self.songList.pop(index)
-        
-    def isIndexInBounds(self, index : str) -> bool:
+
+    def isStringIndexInBounds(self, indexString : str) -> bool:
         try:
-            index = int(index) 
-            if index < 1 or index > len(self.songList):
-                return False
-            return True
+            indexInt = int(indexString)
+            return self.isIndexInBounds(indexInt - 1)
         except:
             return False
+    
+    def isIndexInBounds(self, index : int) -> bool:
+        if index < 0 or index >= len(self.songList):
+            return False
+        return True
