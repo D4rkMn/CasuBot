@@ -1,4 +1,5 @@
 (Ordenados por qué tan recientes son)
+- Se implementó lectura de imágenes para CasuGPT.
 - Se generalizó y reimplementó el conector de bases de datos para cumpleaños y recordatorios.
 - Se reimplementó el sistema de cola de canciones (experimental. Seguir probando)
 - Se reimplementó el sistema de descargas de videos y canciones, al igual que se arreglaron bugs relacionados con el mismo

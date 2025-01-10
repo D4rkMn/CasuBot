@@ -1,5 +1,4 @@
 (Ordenados por prioridad)
-- Mejorar el sistema de lectura de imagenes de CasuGPT
 - Probar el funcionamiento del sistema de música*
 - Generar ASCII art*
 - Reimplementar spotify*

@@ -40,7 +40,7 @@ class ChatCog(commands.Cog):
         if message.author == self.bot.user:
             return
 
-        if message.content.startswith('c!'):
+        if message.content.startswith('c!') or message.content.startswith('d!'):
             return
         
         if message.reference and message.content.isdigit():
@@ -57,20 +57,20 @@ class ChatCog(commands.Cog):
             channel_id = message.channel.id
 
             msg = self.__messagePingsToUsernames(message, message.content)
-            imageUrl = ImageUrlExtractor.extract(message)
+            imagesArray = ImageUrlExtractor.extractAll(message)
 
-            self.chatsManager.addMessageToChannel(channel_id, username, msg, imageUrl)
+            self.chatsManager.addMessageToChannel(channel_id, username, msg, imagesArray)
             response = self.chatsManager.addLlmResponseToChannel(channel_id)
+            self.chatsManager.postProcessImages(channel_id)
 
         await message.reply(response)
         return
     
-    def __messagePingsToUsernames(self, ctx, message):
-        mentioned=ctx.mentions
-        
-        reply=message
+    def __messagePingsToUsernames(self, ctx, message : str):
+        mentions = ctx.mentions
+        reply : str = message
 
-        for user in mentioned:
+        for user in mentions:
             reply = reply.replace(f"<@{user.id}>", user.name)
 
         return reply

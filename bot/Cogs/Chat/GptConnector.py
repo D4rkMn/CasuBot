@@ -2,6 +2,7 @@ from openai import OpenAI
 
 # import the base interface for the llm connector
 from bot.Cogs.Chat.iLlmConnector import iLlmConnector, Message
+from typing import List
 
 #
 #   GptConnector
@@ -13,7 +14,7 @@ class GptConnector(iLlmConnector):
         self.client = OpenAI(api_key = _api_key)
         self.maxTokens = _maxTokens
 
-    def generateResponse(self, systemMessage : Message, chatlog : str) -> str:
+    def generateResponse(self, systemMessage : Message, chatlog : List[Message]) -> str:
         messageList = self.generateMessageList(systemMessage, chatlog)
         response = self.client.chat.completions.create(
             model = "gpt-4o-mini",
@@ -21,7 +22,7 @@ class GptConnector(iLlmConnector):
             response_format = {
                 "type": "text"
             },
-            temperature = 1.2,
+            temperature = 1.15,
             max_completion_tokens = self.maxTokens,
             top_p = 1,
             frequency_penalty = 0,
@@ -40,16 +41,18 @@ class GptConnector(iLlmConnector):
             role = "user"
         
         messageContent = []
-        if message.textContent is not None:
+        
+        for textContent in message.textArray:
             messageContent.append({
                 "type": "text",
-                "text": f"{message.username}: {message.textContent}"
+                "text": f"{message.username}: {textContent}"
             })
-        if message.imageUrl is not None:
+
+        for imageUrl in message.imagesArray:
             messageContent.append({
                 "type": "image_url",
                 "image_url": {
-                    "url": message.imageUrl
+                    "url": imageUrl
                 }
             })
 

@@ -6,10 +6,12 @@ from typing import List
 #   Class to hold messages
 #
 class Message:
-    def __init__(self, _username :str , _textContent : str = None, _imageUrl : str = None):
+    def __init__(self, _username :str , _textContent : str = None, _imagesArray : List[str] = []):
         self.username : str = _username
-        self.textContent : str = _textContent
-        self.imageUrl : str = _imageUrl
+        self.textArray : List[str] = []
+        if _textContent is not None:
+            self.textArray.append(_textContent)
+        self.imagesArray : List[str] = _imagesArray
 
 #
 #   iLlmConnector
@@ -17,7 +19,7 @@ class Message:
 #
 class iLlmConnector(ABC):
     @abstractmethod
-    def generateResponse(self, inputText : str) -> str:
+    def generateResponse(self, systemMessage : Message, chatlog : List[Message]) -> str:
         pass
 
     def generateMessageList(self, systemMessage : Message, chatlog : List[Message]):
