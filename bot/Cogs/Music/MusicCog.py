@@ -171,7 +171,8 @@ class MusicCog(commands.Cog):
         if not voiceClient:
             # hacky way to fix this lmao
             print("hacky sol")
-            return self.addArg(ctx, arg)
+            await self.addArg(ctx, arg)
+            return
 
         if not voiceClient.is_connected():
             print("bot voice client isnt connected despite having joined (?")
@@ -411,8 +412,8 @@ class MusicCog(commands.Cog):
             playlist.handleNextSong()
             await self.playSong(ctx, channelId)
 
-        voiceClient.stop()
         await ctx.reply("Retrocediendo a la anterior canción")
+        voiceClient.stop()
 
     @music.command()
     async def stop(self, ctx):
@@ -427,10 +428,10 @@ class MusicCog(commands.Cog):
             await ctx.send("No está sonando ninguna canción tonto weon.")
             return
 
+        await ctx.reply("Se detuvo la reproducción de la canción")
+
         voiceClient.stop()
         self.playlistDict[channelId].stopCurrentSong()
-
-        await ctx.reply("Se detuvo la reproducción de la canción")
 
     @music.command()
     async def clear(self, ctx):
