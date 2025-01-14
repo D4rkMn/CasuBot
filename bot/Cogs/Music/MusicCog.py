@@ -78,7 +78,7 @@ class MusicCog(commands.Cog):
         voiceChannel = ctx.message.author.voice.channel
 
         try:
-            await voiceChannel.connect()
+            await voiceChannel.connect(reconnect = True)
         except ClientException as e: # if already connected
             pass
         finally:
@@ -256,6 +256,19 @@ class MusicCog(commands.Cog):
             if voice_client.channel and voice_client.channel.id == channelId:
                 voiceClient = voice_client
                 break
+
+        if voiceClient is None:
+            channel = await self.bot.fetch_channel(channelId)
+            if not isinstance(channel, VoiceChannel):
+                print("panic leave")
+                if channelId in self.playlistDict:
+                    self.playlistDict.pop(channelId)
+                return
+            try:
+                voiceClient = await channel.connect(reconnect = True)   
+            except:
+                print("panic shit")
+                return
 
         if voiceClient.is_playing():
             print("Already playing something!")

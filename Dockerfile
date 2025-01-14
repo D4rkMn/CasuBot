@@ -19,5 +19,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Set timezone to America/Lima (Peru)
+ENV TZ=America/Lima
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Run the application
 CMD ["python", "main.py"]
